@@ -38,6 +38,9 @@ const Category = db.define(
     tanggal_daftar: {
       type: DataTypes.DATE,
     },
+    is_valid_user: {
+      type: DataTypes.BOOLEAN,
+    },
   },
   {
     freezeTable: true,

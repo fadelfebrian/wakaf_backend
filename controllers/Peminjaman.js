@@ -1,16 +1,20 @@
-import { Pembayaran, Peminjaman } from "../models/index.js";
+import { Pembayaran, Peminjaman, PesertaWakaf } from "../models/index.js";
 import { upload } from "../helper/upload.js";
 import moment from "moment";
+import { QueryTypes } from "sequelize";
+import db from "../database/index.js";
 
 export const getAllPeminjaman = async (req, res) => {
   try {
-    const result = await Peminjaman.findAll({
-      order: [["id_peminjaman", "DESC"]],
-    });
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+    // const result = await Peminjaman.findAll({
+    //   order: [["id_peminjaman", "DESC"]],
+    // });
     res.status(200).json({
       status: true,
       msg: "success",
-      data: result,
+      data: detail,
     });
   } catch (err) {
     res.status(500).json({
@@ -34,6 +38,34 @@ export const getOnePeminjaman = async (req, res) => {
         status: true,
         msg: "success",
         data: result,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const getDetailPeminjaman = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS WHERE id_peminjaman = ${id} LIMIT 1`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+
+    if (detail) {
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: detail[0],
       });
     } else {
       res.status(400).json({

@@ -20,6 +20,7 @@ import {
   getByNimPeminjaman,
   putPeminjaman,
   savePeminjaman,
+  getDetailPeminjaman,
 } from "../controllers/Peminjaman.js";
 
 import {
@@ -49,6 +50,7 @@ router.post(
 // PEMINJAMAN
 router.get("/peminjaman/getAll", getAllPeminjaman);
 router.get("/peminjaman/getOne", getOnePeminjaman);
+router.get("/peminjaman/getDetail", getDetailPeminjaman);
 router.get("/peminjaman/getByNim", getByNimPeminjaman);
 router.put("/peminjaman/put/:id", putPeminjaman);
 router.post(

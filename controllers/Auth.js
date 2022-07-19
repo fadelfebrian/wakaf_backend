@@ -34,6 +34,14 @@ export const authUser = async (req, res) => {
       passwordUser = user.dataValues.pwd;
     }
 
+    if (user_type == "1" && user.verifikasi == 0) {
+      return res.status(400).json({
+        status: false,
+        msg: "user not activated",
+        data: null,
+      });
+    }
+
     if (bcrypt.compareSync(password, passwordUser)) {
       // const { id_user } = user;
       const accessToken = jwt.sign({ username }, process.env.TOKEN_KEY, {
@@ -42,6 +50,8 @@ export const authUser = async (req, res) => {
       let result = {
         user: user,
         token: accessToken,
+        isMahasiswa: user_type == "1" ? true : false,
+        isVerifikator: user_type == "2" ? true : false,
       };
       return res.status(200).json({
         status: true,

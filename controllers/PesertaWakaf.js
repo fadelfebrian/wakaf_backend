@@ -136,6 +136,7 @@ export const getOnePesertaWakaf = async (req, res) => {
     const { id } = req.query;
 
     const result = await PesertaWakaf.findOne({
+      include: [Mahasiswa],
       where: {
         id_peserta: id,
       },
