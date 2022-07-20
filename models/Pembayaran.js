@@ -8,6 +8,7 @@ const Category = db.define(
     id_file_pembayaran: {
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true,
       type: DataTypes.INTEGER,
     },
     id_peminjam: {

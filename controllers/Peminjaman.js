@@ -124,9 +124,6 @@ export const putPeminjaman = async (req, res) => {
       },
     });
 
-    // console.log("payload", payload);
-    // return;
-
     if (result) {
       const updateDonasi = await Peminjaman.update(payload, {
         where: {
@@ -176,7 +173,7 @@ export const savePeminjaman = async (req, res) => {
         nim,
       };
       const createPeminjaman = await Peminjaman.create(payload);
-      res.status(400).json({
+      res.status(200).json({
         status: true,
         msg: "success",
         data: createPeminjaman,

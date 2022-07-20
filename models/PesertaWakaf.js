@@ -41,6 +41,33 @@ const Category = db.define(
     is_valid_user: {
       type: DataTypes.BOOLEAN,
     },
+    no_ktp_mhs: {
+      type: DataTypes.CHAR(50),
+    },
+    alamat_ktp_mhs: {
+      type: DataTypes.TEXT,
+    },
+    alamat_dom_mhs: {
+      type: DataTypes.TEXT,
+    },
+    nm_ortu: {
+      type: DataTypes.CHAR(100),
+    },
+    no_hp_ortu: {
+      type: DataTypes.CHAR(20),
+    },
+    alamat_dom_ortu: {
+      type: DataTypes.TEXT,
+    },
+    file_ktp: {
+      type: DataTypes.CHAR(255),
+    },
+    file_ktp_ortu: {
+      type: DataTypes.CHAR(255),
+    },
+    file_kk: {
+      type: DataTypes.CHAR(255),
+    },
   },
   {
     freezeTable: true,

@@ -7,6 +7,7 @@ import {
   getOnePesertaWakaf,
   savePesertaWakaf,
   activateAccount,
+  lengkapiData,
 } from "../controllers/PesertaWakaf.js";
 import {
   getAllDonasi,
@@ -27,6 +28,8 @@ import {
   getAllPembayaran,
   getOnePembayaran,
   getByNimPembayaran,
+  savePembayaran,
+  putPembayaran,
 } from "../controllers/Pembayaran.js";
 
 import { authUser } from "../controllers/Auth.js";
@@ -37,6 +40,24 @@ router.get("/pesertaWakaf/getAll", getAllPesertaWakaf);
 router.get("/pesertaWakaf/getOne", getOnePesertaWakaf);
 router.post("/pesertaWakaf/save", savePesertaWakaf);
 router.get("/pesertaWakaf/activate", activateAccount);
+router.put(
+  "/pesertaWakaf/lengkapidata/:id",
+  multer({ dest: os.tmpdir() }).fields([
+    {
+      name: "file_ktp",
+      maxCount: 1,
+    },
+    {
+      name: "file_ktp_ortu",
+      maxCount: 1,
+    },
+    {
+      name: "file_kk",
+      maxCount: 1,
+    },
+  ]),
+  lengkapiData
+);
 
 router.get("/donasi/getAll", getAllDonasi);
 router.get("/donasi/getOne", getOneDonasi);
@@ -72,18 +93,20 @@ router.post(
       name: "file_materai",
       maxCount: 1,
     },
-    // {
-    //   name: "file_krs_ta",
-    //   maxCount: 1,
-    // },
   ]),
-  savePeminjaman
+  lengkapiData
 );
 
 // PEMBAYARAN
 router.get("/pembayaran/getAll", getAllPembayaran);
 router.get("/pembayaran/getOne", getOnePembayaran);
 router.get("/pembayaran/getByNim", getByNimPembayaran);
+router.post(
+  "/pembayaran/save",
+  multer({ dest: os.tmpdir() }).single("file_transfer"),
+  savePembayaran
+);
+router.put("/pembayaran/put/:id", putPembayaran);
 
 // AUTH
 router.post("/auth", authUser);

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 const salt = bcrypt.genSaltSync(10);
 const tokenSalt = bcrypt.genSaltSync(5);
 import { sentMail } from "../helper/mail.js";
+import { upload } from "../helper/upload.js";
 
 export const savePesertaWakaf = async (req, res) => {
   try {
@@ -151,6 +152,57 @@ export const getOnePesertaWakaf = async (req, res) => {
       res.status(400).json({
         status: false,
         msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const lengkapiData = async (req, res) => {
+  try {
+    if (req.files) {
+      const { id } = req.params;
+      const {
+        no_ktp_mhs,
+        alamat_ktp_mhs,
+        alamat_dom_mhs,
+        nm_ortu,
+        no_hp_ortu,
+        alamat_dom_ortu,
+      } = req.body;
+      const uploadedFiles = await upload(req.files, "peserta_wakaf");
+      const payload = {
+        no_ktp_mhs,
+        alamat_ktp_mhs,
+        alamat_dom_mhs,
+        nm_ortu,
+        no_hp_ortu,
+        alamat_dom_ortu,
+        is_valid_user: 1,
+        file_ktp: uploadedFiles.file_ktp,
+        file_ktp_ortu: uploadedFiles.file_ktp_ortu,
+        file_kk: uploadedFiles.file_kk,
+      };
+      const createPeminjaman = await PesertaWakaf.update(payload, {
+        where: {
+          id_peserta: id,
+        },
+      });
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: createPeminjaman,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "bad request",
         data: null,
       });
     }
