@@ -83,8 +83,10 @@ export const putPembayaran = async (req, res) => {
         const newSisa =
           parseInt(findPeminjaman.dataValues.sisa) -
           parseInt(result.dataValues.nominal);
+
         const payloadUpdatePeminjaman = {
           sisa: newSisa,
+          sts_pembayaran: newSisa === 0 ? 1 : 0,
         };
         await Peminjaman.update(payloadUpdatePeminjaman, {
           where: {
