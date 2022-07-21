@@ -9,7 +9,6 @@ const rootPath = path.resolve(__dirname, "..");
 
 export const savePembayaran = async (req, res) => {
   try {
-    console.log("req.file", req.file);
     if (req.file) {
       let tmp_path = req.file.path;
       let originaExt =

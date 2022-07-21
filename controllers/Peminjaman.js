@@ -1,12 +1,18 @@
-import { Pembayaran, Peminjaman, PesertaWakaf } from "../models/index.js";
+import { Peminjaman, JadwalWawancara } from "../models/index.js";
 import { upload } from "../helper/upload.js";
 import moment from "moment";
 import { QueryTypes } from "sequelize";
 import db from "../database/index.js";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootPath = path.resolve(__dirname, "..");
 
 export const getAllPeminjaman = async (req, res) => {
   try {
-    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS`;
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS ORDER BY ID_PEMINJAMAN DESC`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
     // const result = await Peminjaman.findAll({
     //   order: [["id_peminjaman", "DESC"]],
@@ -125,6 +131,23 @@ export const putPeminjaman = async (req, res) => {
     });
 
     if (result) {
+      if (payload?.pesan) {
+        const updateWawancara = { hasil: payload?.pesan };
+        const findWawancara = await JadwalWawancara.findOne({
+          where: {
+            id_peminjam: result.dataValues.id_peminjaman,
+          },
+        });
+        console.log("findWawancara", findWawancara);
+        const updatedWawancara = await JadwalWawancara.update(updateWawancara, {
+          where: { id_jadwal: findWawancara.dataValues.id_jadwal },
+        });
+      }
+      if (payload?.id_peminjam) {
+        const createJadwalWawancara = await JadwalWawancara.create(payload);
+        console.log("createJadwalWawancara", createJadwalWawancara);
+      }
+
       const updateDonasi = await Peminjaman.update(payload, {
         where: {
           id_peminjaman: id,
@@ -139,6 +162,62 @@ export const putPeminjaman = async (req, res) => {
       res.status(400).json({
         status: false,
         msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+export const putPeminjamanUpload = async (req, res) => {
+  try {
+    if (req.file) {
+      const { id } = req.params;
+      let tmp_path = req.file.path;
+      let originaExt =
+        req.file.originalname.split(".")[
+          req.file.originalname.split(".").length - 1
+        ];
+      let filename = req.file.filename + "." + originaExt;
+      let target_path = path.resolve(
+        rootPath,
+        `public/uploads/peminjaman/${filename}`
+      );
+      const src = fs.createReadStream(tmp_path);
+      const dest = fs.createWriteStream(target_path);
+      const payload = {
+        ...req.body,
+        file_krs_ta: filename,
+      };
+      src.pipe(dest);
+      src.on("end", async () => {
+        try {
+          const result = await Peminjaman.update(payload, {
+            where: {
+              id_peminjaman: id,
+            },
+          });
+          res.status(200).json({
+            status: true,
+            msg: "success",
+            data: result,
+          });
+        } catch (err) {
+          res.status(500).json({
+            status: false,
+            msg: err.message,
+            data: null,
+          });
+        }
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "bad request",
         data: null,
       });
     }

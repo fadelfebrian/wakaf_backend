@@ -22,6 +22,7 @@ import {
   putPeminjaman,
   savePeminjaman,
   getDetailPeminjaman,
+  putPeminjamanUpload,
 } from "../controllers/Peminjaman.js";
 
 import {
@@ -74,6 +75,11 @@ router.get("/peminjaman/getOne", getOnePeminjaman);
 router.get("/peminjaman/getDetail", getDetailPeminjaman);
 router.get("/peminjaman/getByNim", getByNimPeminjaman);
 router.put("/peminjaman/put/:id", putPeminjaman);
+router.put(
+  "/peminjaman/putUpload/:id",
+  multer({ dest: os.tmpdir() }).single("file_krs_ta"),
+  putPeminjamanUpload
+);
 router.post(
   "/peminjaman/post",
   multer({ dest: os.tmpdir() }).fields([

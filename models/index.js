@@ -4,6 +4,7 @@ import Donasi from "./Donasi.js";
 import Peminjaman from "./Peminjaman.js";
 import Pembayaran from "./Pembayaran.js";
 import AdminWakaf from "./AdminWakaf.js";
+import JadwalWawancara from "./JadwalWawancara.js";
 
 PesertaWakaf.hasOne(Mahasiswa, {
   onDelete: "RESTRICT",
@@ -24,4 +25,12 @@ PesertaWakaf.belongsTo(Mahasiswa, {
   foreignKey: "nim_mhs",
 });
 
-export { PesertaWakaf, Mahasiswa, Donasi, Peminjaman, Pembayaran, AdminWakaf };
+export {
+  PesertaWakaf,
+  Mahasiswa,
+  Donasi,
+  Peminjaman,
+  Pembayaran,
+  AdminWakaf,
+  JadwalWawancara,
+};
