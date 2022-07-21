@@ -94,7 +94,7 @@ router.post(
       maxCount: 1,
     },
   ]),
-  lengkapiData
+  savePeminjaman
 );
 
 // PEMBAYARAN
