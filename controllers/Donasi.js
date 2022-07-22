@@ -10,6 +10,7 @@ const rootPath = path.resolve(__dirname, "..");
 
 export const saveDonasi = async (req, res) => {
   try {
+    console.log("req", req.file);
     if (req.file) {
       let tmp_path = req.file.path;
       let originaExt =

@@ -1,4 +1,4 @@
-import { AdminWakaf, PesertaWakaf } from "../models/index.js";
+import { AdminWakaf, PesertaWakaf, Donatur } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -19,6 +19,12 @@ export const authUser = async (req, res) => {
           username,
         },
       });
+    } else if (user_type == "3") {
+      user = await Donatur.findOne({
+        where: {
+          nama: username,
+        },
+      });
     }
 
     if (user === null) {
@@ -28,7 +34,7 @@ export const authUser = async (req, res) => {
       });
     }
 
-    if (user_type == "1") {
+    if (user_type == "1" || user_type == "3") {
       passwordUser = user.dataValues.password;
     } else if (user_type == "2") {
       passwordUser = user.dataValues.pwd;
@@ -52,6 +58,7 @@ export const authUser = async (req, res) => {
         token: accessToken,
         isMahasiswa: user_type == "1" ? true : false,
         isVerifikator: user_type == "2" ? true : false,
+        isDonatur: user_type == "3" ? true : false,
       };
       return res.status(200).json({
         status: true,

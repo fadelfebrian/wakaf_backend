@@ -246,7 +246,6 @@ export const savePeminjaman = async (req, res) => {
         sts_pembayaran: 0,
         sisa: nominal,
         tgl_pengajuan: moment().format("YYYY-MM-DD HH:mm:ss"),
-        tgl_jatuh_tempo: moment().format("YYYY-MM-DD"),
         file_bukti_krs: uploadedFiles.file_krs,
         file_tagihan: uploadedFiles.file_tagihan,
         file_s_persetujuan: uploadedFiles.file_persetujuan,

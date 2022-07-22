@@ -35,6 +35,7 @@ import {
 
 import { authUser } from "../controllers/Auth.js";
 import { putAdminWakaf } from "../controllers/AdminWakaf.js";
+import { createDonatur } from "../controllers/Donatur.js";
 
 // Menu
 router.get("/pesertaWakaf/getAll", getAllPesertaWakaf);
@@ -119,5 +120,8 @@ router.post("/auth", authUser);
 
 // ADMIN WAKAF
 router.put("/adminWakaf/put/:id", putAdminWakaf);
+
+// donatur
+router.post("/donatur/createDonatur", createDonatur);
 
 export default router;
