@@ -64,7 +64,10 @@ export const getOnePeminjaman = async (req, res) => {
 export const getDetailPeminjaman = async (req, res) => {
   try {
     const { id } = req.query;
-    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS WHERE id_peminjaman = ${id} LIMIT 1`;
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email,tanggal,tempat,waktu
+    FROM TD_PEMINJAMAN 
+    LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS 
+    LEFT JOIN JADWAL_WAWANCARA  ON TD_PEMINJAMAN.id_peminjaman = jadwal_wawancara.id_peminjam  WHERE id_peminjaman = ${id} LIMIT 1`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
 
     if (detail) {
