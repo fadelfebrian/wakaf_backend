@@ -14,6 +14,9 @@ import {
   getOneDonasi,
   saveDonasi,
   putDonasi,
+  getAllDonasiVerified,
+  getAllDonasiByName,
+  getTotalDonasi,
 } from "../controllers/Donasi.js";
 import {
   getAllPeminjaman,
@@ -61,8 +64,11 @@ router.put(
   lengkapiData
 );
 
+router.get("/donasi/getTotalDonasi", getTotalDonasi);
 router.get("/donasi/getAll", getAllDonasi);
 router.get("/donasi/getOne", getOneDonasi);
+router.get("/donasi/getAllDonasiVerified", getAllDonasiVerified);
+router.get("/donasi/getAllDonasiByName", getAllDonasiByName);
 router.put("/donasi/put/:id", putDonasi);
 router.post(
   "/donasi/save",
