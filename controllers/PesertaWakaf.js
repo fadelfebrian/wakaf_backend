@@ -16,7 +16,6 @@ export const savePesertaWakaf = async (req, res) => {
         nim: payload.nim,
       },
     });
-    // console.log("findMhs", findMhs);
     if (findMhs) {
       const result = await PesertaWakaf.findOne({
         where: {
@@ -106,6 +105,83 @@ export const activateAccount = async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const forgetPassword = async (req, res) => {
+  try {
+    let user = null;
+    const { username, password, user_type } = req.body;
+    if (user_type == "1") {
+      user = await PesertaWakaf.findOne({
+        where: {
+          nim_mhs: username,
+        },
+      });
+    } else if (user_type == "2") {
+      user = await AdminWakaf.findOne({
+        where: {
+          username,
+        },
+      });
+    } else if (user_type == "3") {
+      user = await Donatur.findOne({
+        where: {
+          nama: username,
+        },
+      });
+    }
+
+    if (user === null) {
+      return res.status(400).json({
+        status: false,
+        msg: "user not exist",
+      });
+    }
+
+    let result = null;
+    const payload = {
+      password: bcrypt.hashSync(password, salt),
+    };
+    if (user_type == "1") {
+      result = await PesertaWakaf.update(payload, {
+        where: {
+          nim_mhs: username,
+        },
+      });
+    } else if (user_type == "2") {
+      result = await AdminWakaf.update(payload, {
+        where: {
+          username,
+        },
+      });
+    } else if (user_type == "3") {
+      result = await Donatur.update(payload, {
+        where: {
+          nama: username,
+        },
+      });
+    }
+
+    if (result !== null) {
+      return res.status(200).json({
+        status: true,
+        msg: "success",
+        data: result,
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        msg: "success",
+        data: null,
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
       status: false,
       msg: err.message,
       data: null,

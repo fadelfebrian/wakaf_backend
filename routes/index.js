@@ -8,6 +8,7 @@ import {
   savePesertaWakaf,
   activateAccount,
   lengkapiData,
+  forgetPassword,
 } from "../controllers/PesertaWakaf.js";
 import {
   getAllDonasi,
@@ -26,6 +27,14 @@ import {
   savePeminjaman,
   getDetailPeminjaman,
   putPeminjamanUpload,
+  getListPerpanjangan,
+  putPengajuanPerpanjangan,
+  getAllPerpanjangan,
+  saveWawancara,
+  putPerpanjanganAdmin,
+  getDetailPerpanjangan,
+  getPeminjamanValidated,
+  getPaidPembayaran,
 } from "../controllers/Peminjaman.js";
 
 import {
@@ -44,6 +53,7 @@ import { createDonatur } from "../controllers/Donatur.js";
 router.get("/pesertaWakaf/getAll", getAllPesertaWakaf);
 router.get("/pesertaWakaf/getOne", getOnePesertaWakaf);
 router.post("/pesertaWakaf/save", savePesertaWakaf);
+router.post("/pesertaWakaf/forgetPassword", forgetPassword);
 router.get("/pesertaWakaf/activate", activateAccount);
 router.put(
   "/pesertaWakaf/lengkapidata/:id",
@@ -78,10 +88,21 @@ router.post(
 
 // PEMINJAMAN
 router.get("/peminjaman/getAll", getAllPeminjaman);
+router.post("/peminjaman/createWawancara", saveWawancara);
+router.put("/peminjaman/putPerpanjanganAdmin/:id", putPerpanjanganAdmin);
+router.get("/peminjaman/getListPerpanjangan", getListPerpanjangan);
+router.get("/peminjaman/getPeminjamanValidated", getPeminjamanValidated);
+router.get("/peminjaman/getPaidPembayaran", getPaidPembayaran);
 router.get("/peminjaman/getOne", getOnePeminjaman);
 router.get("/peminjaman/getDetail", getDetailPeminjaman);
+router.get("/peminjaman/getDetailPerpanjangan", getDetailPerpanjangan);
 router.get("/peminjaman/getByNim", getByNimPeminjaman);
+router.get("/peminjaman/getAllPerpanjangan", getAllPerpanjangan);
 router.put("/peminjaman/put/:id", putPeminjaman);
+router.put(
+  "/peminjaman/putPengajuanPerpanjangan/:id",
+  putPengajuanPerpanjangan
+);
 router.put(
   "/peminjaman/putUpload/:id",
   multer({ dest: os.tmpdir() }).single("file_krs_ta"),

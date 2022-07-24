@@ -60,14 +60,73 @@ export const getOnePeminjaman = async (req, res) => {
     });
   }
 };
+export const getListPerpanjangan = async (req, res) => {
+  try {
+    const { nim } = req.query;
+    const dateNow = moment().format("YYYY-MM-DD");
+    console.log("dateNow", dateNow);
+    const query = `SELECT * FROM TD_PEMINJAMAN WHERE TGL_JATUH_TEMPO <= CURDATE() and nim = ${nim} and STS_PEMINJAMAN = 1`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+
+    if (detail) {
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: detail,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
 
 export const getDetailPeminjaman = async (req, res) => {
   try {
     const { id } = req.query;
-    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email,tanggal,tempat,waktu
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email,tanggal,tempat,waktu,id_jadwal
     FROM TD_PEMINJAMAN 
     LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS 
-    LEFT JOIN JADWAL_WAWANCARA  ON TD_PEMINJAMAN.id_peminjaman = jadwal_wawancara.id_peminjam  WHERE id_peminjaman = ${id} LIMIT 1`;
+    LEFT JOIN JADWAL_WAWANCARA  ON TD_PEMINJAMAN.id_peminjaman = jadwal_wawancara.id_peminjam  WHERE id_peminjaman = ${id} and is_perpanjangan = false LIMIT 1 `;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+
+    if (detail) {
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: detail[0],
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+export const getDetailPerpanjangan = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,tanggal,tempat,waktu,id_jadwal
+    FROM TD_PEMINJAMAN 
+    LEFT JOIN JADWAL_WAWANCARA  ON TD_PEMINJAMAN.id_peminjaman = jadwal_wawancara.id_peminjam 
+    WHERE id_peminjaman = ${id} ORDER BY ID_JADWAL DESC LIMIT 1 `;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
 
     if (detail) {
@@ -106,6 +165,127 @@ export const getByNimPeminjaman = async (req, res) => {
         status: true,
         msg: "success",
         data: result,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const getPeminjamanValidated = async (req, res) => {
+  try {
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS WHERE STS_PENGAJUAN = 4 ORDER BY ID_PEMINJAMAN DESC`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+    // const result = await Peminjaman.findAll({
+    //   order: [["id_peminjaman", "DESC"]],
+    //   where: {
+    //     sts_pengajuan: "4",
+    //   },
+    // });
+    if (detail) {
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: detail,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const getPaidPembayaran = async (req, res) => {
+  try {
+    const result = await Peminjaman.findAll({
+      order: [["id_peminjaman", "DESC"]],
+      where: {
+        sts_pembayaran: "1",
+      },
+    });
+    if (result) {
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: result,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const getAllPerpanjangan = async (req, res) => {
+  try {
+    const result = await Peminjaman.findAll({
+      order: [["id_peminjaman", "DESC"]],
+      where: {
+        sts_pengajuan: "5",
+      },
+    });
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const putPengajuanPerpanjangan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const payload = { ...req.body };
+    const result = await Peminjaman.findOne({
+      where: {
+        id_peminjaman: id,
+      },
+    });
+
+    if (result) {
+      const updateDonasi = await Peminjaman.update(payload, {
+        where: {
+          id_peminjaman: id,
+        },
+      });
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: updateDonasi,
       });
     } else {
       res.status(400).json({
@@ -266,6 +446,73 @@ export const savePeminjaman = async (req, res) => {
         data: null,
       });
     }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const saveWawancara = async (req, res) => {
+  try {
+    const payload = { ...req.body };
+    const createWawancara = await JadwalWawancara.create(payload);
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: createWawancara,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+export const putPerpanjanganAdmin = async (req, res) => {
+  try {
+    const payloadWawancara = {
+      hasil: req.body.pesan,
+    };
+    const payloadStatus = {
+      sts_pengajuan: req.body.sts_pengajuan,
+      pesan: req.body.pesan,
+      tgl_jatuh_tempo: req.body.tgl_jatuh_tempo,
+    };
+    const { id } = req.params;
+    const findOne = await Peminjaman.findOne({
+      where: {
+        id_peminjaman: id,
+      },
+    });
+
+    if (findOne) {
+      const result = await Peminjaman.update(payloadStatus, {
+        where: {
+          id_peminjaman: id,
+        },
+      });
+      const resultWawancara = await JadwalWawancara.update(payloadWawancara, {
+        where: {
+          id_jadwal: req.body.id_jadwal,
+        },
+      });
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: result,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "record not found",
+        data: null,
+      });
+    }
+    // const createWawancara = await JadwalWawancara.create(payload);
   } catch (err) {
     res.status(500).json({
       status: false,
