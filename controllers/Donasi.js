@@ -111,7 +111,7 @@ export const getAllDonasiByName = async (req, res) => {
 export const getTotalDonasi = async (req, res) => {
   try {
     const query =
-      "SELECT SUM(NOMINAL) AS jml_donasi FROM TD_DONASI WHERE STS_DONASI = 1";
+      "select SUM(nominal) AS jml_donasi FROM td_donasi WHERE sts_donasi = 1";
     const JML = await db.query(query, { type: QueryTypes.SELECT });
     res.status(200).json({
       status: true,
