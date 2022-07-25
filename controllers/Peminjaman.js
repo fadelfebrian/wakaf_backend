@@ -9,6 +9,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootPath = path.resolve(__dirname, "..");
+import { handlePushTokens } from "../helper/fcm.js";
+import helper from "../helper/status.js";
 
 export const getAllPeminjaman = async (req, res) => {
   try {
@@ -17,6 +19,8 @@ export const getAllPeminjaman = async (req, res) => {
     // const result = await Peminjaman.findAll({
     //   order: [["id_peminjaman", "DESC"]],
     // });
+    await handlePushTokens({ body: helper.statusPengajuan("0") });
+
     res.status(200).json({
       status: true,
       msg: "success",
