@@ -9,6 +9,7 @@ import {
   activateAccount,
   lengkapiData,
   forgetPassword,
+  updateTokenMsg,
 } from "../controllers/PesertaWakaf.js";
 import {
   getAllDonasi,
@@ -55,6 +56,7 @@ router.get("/pesertaWakaf/getOne", getOnePesertaWakaf);
 router.post("/pesertaWakaf/save", savePesertaWakaf);
 router.post("/pesertaWakaf/forgetPassword", forgetPassword);
 router.get("/pesertaWakaf/activate", activateAccount);
+router.put("/pesertaWakaf/updateTokenMsg/:id", updateTokenMsg);
 router.put(
   "/pesertaWakaf/lengkapidata/:id",
   multer({ dest: os.tmpdir() }).fields([

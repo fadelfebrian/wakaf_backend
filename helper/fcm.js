@@ -1,7 +1,10 @@
 import { Expo } from "expo-server-sdk";
 const expo = new Expo();
 export const handlePushTokens = ({ body }) => {
-  let savedPushTokens = ["ExponentPushToken[T4KpzbHU9CcvYSeQeEe6my]"];
+  let savedPushTokens = [
+    "ExponentPushToken[8oFE0FOcKQ7cTg3s5ypbMv]",
+    "ExponentPushToken[LB-60JD9E6aToTzy3ba9RY]",
+  ];
   let notifications = [];
   for (let pushToken of savedPushTokens) {
     if (!Expo.isExpoPushToken(pushToken)) {

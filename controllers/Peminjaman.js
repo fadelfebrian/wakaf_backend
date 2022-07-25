@@ -19,7 +19,6 @@ export const getAllPeminjaman = async (req, res) => {
     // const result = await Peminjaman.findAll({
     //   order: [["id_peminjaman", "DESC"]],
     // });
-    await handlePushTokens({ body: helper.statusPengajuan("0") });
 
     res.status(200).json({
       status: true,
@@ -318,6 +317,16 @@ export const putPeminjaman = async (req, res) => {
     });
 
     if (result) {
+      if (payload?.sts_pengajuan) {
+        await handlePushTokens({
+          body: helper.statusPengajuan(payload?.sts_pengajuan),
+        });
+      }
+      if (payload?.sts_peminjaman) {
+        await handlePushTokens({
+          body: helper.statusPeminjaman(payload?.sts_peminjaman),
+        });
+      }
       if (payload?.pesan) {
         const updateWawancara = { hasil: payload?.pesan };
         const findWawancara = await JadwalWawancara.findOne({
@@ -437,6 +446,8 @@ export const savePeminjaman = async (req, res) => {
         file_krs_ta: 0,
         nim,
       };
+      await handlePushTokens({ body: helper.statusPengajuan("0") });
+
       const createPeminjaman = await Peminjaman.create(payload);
       res.status(200).json({
         status: true,
@@ -486,6 +497,10 @@ export const putPerpanjanganAdmin = async (req, res) => {
       pesan: req.body.pesan,
       tgl_jatuh_tempo: req.body.tgl_jatuh_tempo,
     };
+    await handlePushTokens({
+      body: helper.statusPengajuan(req.body.sts_pengajuan),
+    });
+
     const { id } = req.params;
     const findOne = await Peminjaman.findOne({
       where: {

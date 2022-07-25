@@ -112,6 +112,45 @@ export const activateAccount = async (req, res) => {
   }
 };
 
+export const updateTokenMsg = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const findToken = await PesertaWakaf.findOne({
+      where: {
+        id_peserta: id,
+      },
+    });
+    console.log("findToken", findToken);
+    if (findToken) {
+      const payload = {
+        token_msg: req.body.token_msg,
+      };
+      const updatedUser = PesertaWakaf.update(payload, {
+        where: {
+          id_peserta: findToken.id,
+        },
+      });
+      res.status(200).json({
+        status: true,
+        msg: "success",
+        data: "token updated",
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        msg: "token not found",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
 export const forgetPassword = async (req, res) => {
   try {
     let user = null;
