@@ -14,7 +14,7 @@ import helper from "../helper/status.js";
 
 export const getAllPeminjaman = async (req, res) => {
   try {
-    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS ORDER BY ID_PEMINJAMAN DESC`;
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM td_peminjaman LEFT JOIN td_peserta_wakaf ON td_peminjaman.NIM = td_peserta_wakaf.nim_mhs ORDER BY id_peminjaman DESC`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
     // const result = await Peminjaman.findAll({
     //   order: [["id_peminjaman", "DESC"]],
@@ -69,7 +69,7 @@ export const getListPerpanjangan = async (req, res) => {
     const { nim } = req.query;
     const dateNow = moment().format("YYYY-MM-DD");
     console.log("dateNow", dateNow);
-    const query = `SELECT * FROM TD_PEMINJAMAN WHERE TGL_JATUH_TEMPO <= CURDATE() and nim = ${nim} and STS_PEMINJAMAN = 1`;
+    const query = `SELECT * FROM td_peminjaman WHERE TGL_JATUH_TEMPO <= CURDATE() and nim = ${nim} and STS_PEMINJAMAN = 1`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
 
     if (detail) {
@@ -98,9 +98,9 @@ export const getDetailPeminjaman = async (req, res) => {
   try {
     const { id } = req.query;
     const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email,tanggal,tempat,waktu,id_jadwal
-    FROM TD_PEMINJAMAN 
-    LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS 
-    LEFT JOIN JADWAL_WAWANCARA  ON TD_PEMINJAMAN.id_peminjaman = jadwal_wawancara.id_peminjam  WHERE id_peminjaman = ${id}  LIMIT 1 `;
+    FROM td_peminjaman 
+    LEFT JOIN td_peserta_wakaf ON td_peminjaman.NIM = td_peserta_wakaf.nim_mhs 
+    LEFT JOIN jadwal_wawancara  ON td_peminjaman.id_peminjaman = jadwal_wawancara.id_peminjam  WHERE id_peminjaman = ${id}  LIMIT 1 `;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
 
     if (detail) {
@@ -128,8 +128,8 @@ export const getDetailPerpanjangan = async (req, res) => {
   try {
     const { id } = req.query;
     const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,tanggal,tempat,waktu,id_jadwal
-    FROM TD_PEMINJAMAN 
-    LEFT JOIN JADWAL_WAWANCARA  ON TD_PEMINJAMAN.id_peminjaman = jadwal_wawancara.id_peminjam 
+    FROM td_peminjaman 
+    LEFT JOIN jadwal_wawancara  ON td_peminjaman.id_peminjaman = jadwal_wawancara.id_peminjam 
     WHERE id_peminjaman = ${id} ORDER BY ID_JADWAL DESC LIMIT 1 `;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
 
@@ -188,7 +188,7 @@ export const getByNimPeminjaman = async (req, res) => {
 
 export const getPeminjamanValidated = async (req, res) => {
   try {
-    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM TD_PEMINJAMAN LEFT JOIN TD_PESERTA_WAKAF ON TD_PEMINJAMAN.NIM = TD_PESERTA_WAKAF.NIM_MHS WHERE STS_PENGAJUAN = 4 ORDER BY ID_PEMINJAMAN DESC`;
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM td_peminjaman LEFT JOIN td_peserta_wakaf ON td_peminjaman.NIM = td_peserta_wakaf.nim_mhs WHERE sts_pengajuan = 4 ORDER BY id_peminjaman DESC`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
     // const result = await Peminjaman.findAll({
     //   order: [["id_peminjaman", "DESC"]],
