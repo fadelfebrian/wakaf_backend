@@ -22,7 +22,7 @@ export const sentMail = async (emailReceived, emailUsername, tokenEmail) => {
       to: emailReceived, // list of receivers
       subject: "Verifikasi Pendaftaran", // Subject line
       text: `Verifikasi Pendaftaran`, // plain text body
-      html: `<b>Kepada Yth. ${emailUsername} Terimakasih telah melakukan pendaftaran. Silahkan Klik link dibawah ini untuk melakukan konfirmasi email http://localhost:3001/pesertaWakaf/activate?token=${tokenEmail}</b>`,
+      html: `<b>Kepada Yth. ${emailUsername} Terimakasih telah melakukan pendaftaran. Silahkan Klik link dibawah ini untuk melakukan konfirmasi email http://http://103.183.75.222:3001/pesertaWakaf/activate?token=${tokenEmail}</b>`,
     },
     (err, info) => {
       if (err) {
