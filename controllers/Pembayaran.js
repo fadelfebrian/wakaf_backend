@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootPath = path.resolve(__dirname, "..");
+import { handlePushTokens } from "../helper/fcm.js";
 
 export const savePembayaran = async (req, res) => {
   try {
@@ -29,6 +30,10 @@ export const savePembayaran = async (req, res) => {
         file_transfer: filename,
         sts_pembayaran: 0,
       };
+
+      await handlePushTokens({
+        body: "Validasi Pembayaran",
+      });
       src.pipe(dest);
       src.on("end", async () => {
         try {
@@ -91,6 +96,15 @@ export const putPembayaran = async (req, res) => {
           where: {
             id_peminjaman: result.dataValues.id_peminjam,
           },
+        });
+      }
+
+      if (payload.sts_pembayaran) {
+        await handlePushTokens({
+          body:
+            payload.sts_pembayaran === "1"
+              ? "Validasi Pembayaran"
+              : "Proses Pembayaran ",
         });
       }
 
