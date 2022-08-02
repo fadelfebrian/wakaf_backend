@@ -1,6 +1,108 @@
 import { AdminWakaf, PesertaWakaf, Donatur } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+const salt = bcrypt.genSaltSync(10);
+
+export const changePassword = async (req, res) => {
+  try {
+    const { user_type, id, new_password, old_password } = req.body;
+    // const payload = { ...req.body };
+    let user = null;
+    let passwordUser = null;
+
+    if (user_type == "1") {
+      user = await PesertaWakaf.findOne({
+        where: {
+          id_peserta: id,
+        },
+      });
+    } else if (user_type == "2") {
+      user = await AdminWakaf.findOne({
+        where: {
+          id_admin_wakaf: id,
+        },
+      });
+    } else if (user_type == "3") {
+      user = await Donatur.findOne({
+        where: {
+          id_donatur: id,
+        },
+      });
+    }
+
+    if (user === null) {
+      return res.status(400).json({
+        status: false,
+        msg: "user not exist",
+      });
+    }
+
+    if (user_type == "1" || user_type == "3") {
+      passwordUser = user.dataValues.password;
+    } else if (user_type == "2") {
+      passwordUser = user.dataValues.pwd;
+    }
+
+    if (bcrypt.compareSync(old_password, passwordUser)) {
+      let resultChangePassword = null;
+      const payloadChangePasswordAdmin = {
+        pwd: bcrypt.hashSync(new_password, salt),
+      };
+      const payloadChangePasswordMhs = {
+        password: bcrypt.hashSync(new_password, salt),
+      };
+
+      if (user_type == "1") {
+        resultChangePassword = await PesertaWakaf.update(
+          payloadChangePasswordMhs,
+          {
+            where: {
+              id_peserta: id,
+            },
+          }
+        );
+      } else if (user_type == "2") {
+        resultChangePassword = await AdminWakaf.update(
+          payloadChangePasswordAdmin,
+          {
+            where: {
+              id_admin_wakaf: id,
+            },
+          }
+        );
+      } else if (user_type == "3") {
+        user = await Donatur.update(payloadChangePasswordMhs, {
+          where: {
+            id_donatur: id,
+          },
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        msg: "success",
+        data: resultChangePassword,
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        msg: "password not match",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      msg: "success",
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
 
 export const authUser = async (req, res) => {
   try {

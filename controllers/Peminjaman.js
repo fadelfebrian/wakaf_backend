@@ -16,14 +16,75 @@ export const getAllPeminjaman = async (req, res) => {
   try {
     const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM td_peminjaman LEFT JOIN td_peserta_wakaf ON td_peminjaman.NIM = td_peserta_wakaf.nim_mhs ORDER BY id_peminjaman DESC`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
-    // const result = await Peminjaman.findAll({
-    //   order: [["id_peminjaman", "DESC"]],
-    // });
 
     res.status(200).json({
       status: true,
       msg: "success",
       data: detail,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
+export const getSummaryPeminjaman = async (req, res) => {
+  try {
+    let result = {};
+    const date = new Date();
+    const month = date.getMonth();
+    const jmlPeminjaman = `SELECT count(id_peminjaman) as jml_peminjaman from td_peminjaman where sts_peminjaman = 1 `;
+    const totalPeminjaman = `SELECT sum(nominal) as total_peminjaman from td_peminjaman where sts_peminjaman = 1 `;
+    const totalPeminjamanSebulan = `SELECT sum(nominal) as total_peminjaman_sebulan from td_peminjaman where sts_peminjaman = 1 and month(tgl_pengajuan)=${month} `;
+    const totalPembayaran = `SELECT count(id_peminjaman) as jml_pembayaran from td_peminjaman where sts_pembayaran = 1 `;
+    const totalDonatur = `SELECT count(id_donatur) as total_donatur from td_donatur `;
+    const totalDonasi = `SELECT sum(nominal) as total_donasi from td_donasi where sts_donasi = 1`;
+    const execJmlPeminjaman = await db.query(jmlPeminjaman, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalPeminjaman = await db.query(totalPeminjaman, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalPeminjamanSebulan = await db.query(totalPeminjamanSebulan, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalPembayaran = await db.query(totalPembayaran, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalDonatur = await db.query(totalDonatur, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalDonasi = await db.query(totalDonasi, {
+      type: QueryTypes.SELECT,
+    });
+
+    if (execJmlPeminjaman) {
+      result.jml_peminjaman = execJmlPeminjaman[0].jml_peminjaman;
+    }
+    if (execTotalPeminjaman) {
+      result.total_peminjaman = execTotalPeminjaman[0].total_peminjaman;
+    }
+    if (execTotalPeminjaman) {
+      result.jml_pembayaran = execTotalPembayaran[0].jml_pembayaran;
+    }
+    if (execTotalPeminjamanSebulan) {
+      result.total_peminjaman_sebulan =
+        execTotalPeminjamanSebulan[0].total_peminjaman_sebulan;
+    }
+    if (execTotalDonatur) {
+      result.total_donatur = execTotalDonatur[0].total_donatur;
+    }
+    if (execTotalDonasi) {
+      result.total_donasi = execTotalDonasi[0].total_donasi;
+    }
+
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: result,
     });
   } catch (err) {
     res.status(500).json({

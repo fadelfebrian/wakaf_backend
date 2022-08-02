@@ -36,6 +36,7 @@ import {
   getDetailPerpanjangan,
   getPeminjamanValidated,
   getPaidPembayaran,
+  getSummaryPeminjaman,
 } from "../controllers/Peminjaman.js";
 
 import {
@@ -46,7 +47,7 @@ import {
   putPembayaran,
 } from "../controllers/Pembayaran.js";
 
-import { authUser } from "../controllers/Auth.js";
+import { authUser, changePassword } from "../controllers/Auth.js";
 import { putAdminWakaf } from "../controllers/AdminWakaf.js";
 import { createDonatur } from "../controllers/Donatur.js";
 
@@ -90,6 +91,7 @@ router.post(
 
 // PEMINJAMAN
 router.get("/peminjaman/getAll", getAllPeminjaman);
+router.get("/peminjaman/getSummaryPeminjaman", getSummaryPeminjaman);
 router.post("/peminjaman/createWawancara", saveWawancara);
 router.put("/peminjaman/putPerpanjanganAdmin/:id", putPerpanjanganAdmin);
 router.get("/peminjaman/getListPerpanjangan", getListPerpanjangan);
@@ -146,6 +148,7 @@ router.put("/pembayaran/put/:id", putPembayaran);
 
 // AUTH
 router.post("/auth", authUser);
+router.post("/auth/changePassword", changePassword);
 
 // ADMIN WAKAF
 router.put("/adminWakaf/put/:id", putAdminWakaf);
