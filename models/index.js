@@ -6,6 +6,7 @@ import Pembayaran from "./Pembayaran.js";
 import AdminWakaf from "./AdminWakaf.js";
 import JadwalWawancara from "./JadwalWawancara.js";
 import Donatur from "./Donatur.js";
+import Konten from "./Konten.js";
 
 PesertaWakaf.hasOne(Mahasiswa, {
   onDelete: "RESTRICT",
@@ -35,4 +36,5 @@ export {
   AdminWakaf,
   JadwalWawancara,
   Donatur,
+  Konten,
 };

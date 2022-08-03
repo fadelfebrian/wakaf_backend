@@ -1,4 +1,4 @@
-import { Peminjaman, JadwalWawancara } from "../models/index.js";
+import { Peminjaman, JadwalWawancara, Konten } from "../models/index.js";
 import { upload } from "../helper/upload.js";
 import moment from "moment";
 import { QueryTypes } from "sequelize";
@@ -11,6 +11,23 @@ const __dirname = path.dirname(__filename);
 const rootPath = path.resolve(__dirname, "..");
 import { handlePushTokens } from "../helper/fcm.js";
 import helper from "../helper/status.js";
+
+export const getAllKonten = async (req, res) => {
+  try {
+    const result = await Konten.findAll();
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
 
 export const getAllPeminjaman = async (req, res) => {
   try {
@@ -129,7 +146,7 @@ export const getListPerpanjangan = async (req, res) => {
     const { nim } = req.query;
     const dateNow = moment().format("YYYY-MM-DD");
     console.log("dateNow", dateNow);
-    const query = `SELECT * FROM td_peminjaman WHERE TGL_JATUH_TEMPO <= CURDATE() and nim = ${nim} and STS_PEMINJAMAN = 1`;
+    const query = `SELECT * FROM td_peminjaman WHERE nim = ${nim} and STS_PENGAJUAN = "5"`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
 
     if (detail) {
@@ -310,16 +327,19 @@ export const getPaidPembayaran = async (req, res) => {
 
 export const getAllPerpanjangan = async (req, res) => {
   try {
-    const result = await Peminjaman.findAll({
-      order: [["id_peminjaman", "DESC"]],
-      where: {
-        sts_pengajuan: "5",
-      },
-    });
+    const query = `SELECT * FROM td_peminjaman WHERE TGL_JATUH_TEMPO <= CURDATE() and STS_PEMINJAMAN = 1 and STS_PEMBAYARAN =0 and sts_pengajuan =4 or sts_pengajuan =5`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+
+    // const result = await Peminjaman.findAll({
+    //   order: [["id_peminjaman", "DESC"]],
+    //   where: {
+    //     sts_pengajuan: "5",
+    //   },
+    // });
     res.status(200).json({
       status: true,
       msg: "success",
-      data: result,
+      data: detail,
     });
   } catch (err) {
     res.status(500).json({
@@ -534,7 +554,15 @@ export const savePeminjaman = async (req, res) => {
 export const saveWawancara = async (req, res) => {
   try {
     const payload = { ...req.body };
+    const payloadPeminjaman = {
+      sts_pengajuan: "5",
+    };
     const createWawancara = await JadwalWawancara.create(payload);
+    Peminjaman.update(payloadPeminjaman, {
+      where: {
+        id_peminjaman: payload.id_peminjam,
+      },
+    });
     res.status(200).json({
       status: true,
       msg: "success",

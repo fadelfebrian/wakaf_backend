@@ -37,6 +37,7 @@ import {
   getPeminjamanValidated,
   getPaidPembayaran,
   getSummaryPeminjaman,
+  getAllKonten,
 } from "../controllers/Peminjaman.js";
 
 import {
@@ -91,6 +92,7 @@ router.post(
 
 // PEMINJAMAN
 router.get("/peminjaman/getAll", getAllPeminjaman);
+router.get("/konten/getAll", getAllKonten);
 router.get("/peminjaman/getSummaryPeminjaman", getSummaryPeminjaman);
 router.post("/peminjaman/createWawancara", saveWawancara);
 router.put("/peminjaman/putPerpanjanganAdmin/:id", putPerpanjanganAdmin);

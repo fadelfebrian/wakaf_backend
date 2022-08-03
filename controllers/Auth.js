@@ -2,6 +2,8 @@ import { AdminWakaf, PesertaWakaf, Donatur } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const salt = bcrypt.genSaltSync(10);
+import Sequelize from "sequelize";
+const { Op } = Sequelize;
 
 export const changePassword = async (req, res) => {
   try {
@@ -119,6 +121,18 @@ export const authUser = async (req, res) => {
       user = await AdminWakaf.findOne({
         where: {
           username,
+          akses: {
+            [Op.or]: [1, 6],
+          },
+        },
+      });
+    } else if (user_type == "4") {
+      user = await AdminWakaf.findOne({
+        where: {
+          username,
+          akses: {
+            [Op.or]: [3, 4, 5],
+          },
         },
       });
     } else if (user_type == "3") {
@@ -138,7 +152,7 @@ export const authUser = async (req, res) => {
 
     if (user_type == "1" || user_type == "3") {
       passwordUser = user.dataValues.password;
-    } else if (user_type == "2") {
+    } else if (user_type == "2" || user_type == "4" || user_type == "5") {
       passwordUser = user.dataValues.pwd;
     }
 
@@ -159,7 +173,10 @@ export const authUser = async (req, res) => {
         user: user,
         token: accessToken,
         isMahasiswa: user_type == "1" ? true : false,
-        isVerifikator: user_type == "2" ? true : false,
+        isVerifikator:
+          user_type == "2" || user_type == "4" || user_type == "5"
+            ? true
+            : false,
         isDonatur: user_type == "3" ? true : false,
       };
       return res.status(200).json({
