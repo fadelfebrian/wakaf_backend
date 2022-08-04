@@ -122,7 +122,16 @@ export const authUser = async (req, res) => {
         where: {
           username,
           akses: {
-            [Op.or]: [1, 6],
+            [Op.or]: [1],
+          },
+        },
+      });
+    } else if (user_type == "5") {
+      user = await AdminWakaf.findOne({
+        where: {
+          username,
+          akses: {
+            [Op.or]: [2, 6],
           },
         },
       });
