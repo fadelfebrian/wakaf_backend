@@ -59,6 +59,9 @@ export const getSummaryPeminjaman = async (req, res) => {
     const totalPembayaran = `SELECT count(id_peminjaman) as jml_pembayaran from td_peminjaman where sts_pembayaran = 1 `;
     const totalDonatur = `SELECT count(id_donatur) as total_donatur from td_donatur `;
     const totalDonasi = `SELECT sum(nominal) as total_donasi from td_donasi where sts_donasi = 1`;
+    const totalPeminjamanTA = `SELECT sum(nominal) as total_peminjaman_ta from td_peminjaman where sts_peminjaman = 1 and jenis_pinjaman = "TA"`;
+    const totalPeminjamanUKT = `SELECT sum(nominal) as total_peminjaman_ukt from td_peminjaman where sts_peminjaman = 1 and jenis_pinjaman = "AK"`;
+
     const execJmlPeminjaman = await db.query(jmlPeminjaman, {
       type: QueryTypes.SELECT,
     });
@@ -75,6 +78,12 @@ export const getSummaryPeminjaman = async (req, res) => {
       type: QueryTypes.SELECT,
     });
     const execTotalDonasi = await db.query(totalDonasi, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalPinjamanTA = await db.query(totalPeminjamanTA, {
+      type: QueryTypes.SELECT,
+    });
+    const execTotalPinjamanUKT = await db.query(totalPeminjamanUKT, {
       type: QueryTypes.SELECT,
     });
 
@@ -96,6 +105,13 @@ export const getSummaryPeminjaman = async (req, res) => {
     }
     if (execTotalDonasi) {
       result.total_donasi = execTotalDonasi[0].total_donasi;
+    }
+    if (execTotalPinjamanTA) {
+      result.total_peminjaman_ta = execTotalPinjamanTA[0].total_peminjaman_ta;
+    }
+    if (execTotalPinjamanUKT) {
+      result.total_peminjaman_ukt =
+        execTotalPinjamanUKT[0].total_peminjaman_ukt;
     }
 
     res.status(200).json({
