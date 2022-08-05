@@ -174,7 +174,7 @@ export const getListPerpanjangan = async (req, res) => {
 export const getDetailPeminjaman = async (req, res) => {
   try {
     const { id } = req.query;
-    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email,tanggal,tempat,waktu,id_jadwal
+    const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email,tanggal,tempat,waktu,id_jadwal,file_ktp,file_kk,file_ktp_ortu
     FROM td_peminjaman 
     LEFT JOIN td_peserta_wakaf ON td_peminjaman.NIM = td_peserta_wakaf.nim_mhs 
     LEFT JOIN jadwal_wawancara  ON td_peminjaman.id_peminjaman = jadwal_wawancara.id_peminjam  WHERE id_peminjaman = ${id}  LIMIT 1 `;
