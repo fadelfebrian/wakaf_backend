@@ -10,6 +10,26 @@ import { QueryTypes } from "sequelize";
 
 const rootPath = path.resolve(__dirname, "..");
 
+export const getDonasiByBetweenDate = async (req, res) => {
+  try {
+    const { firstDate, secondDate } = req.body;
+    const query = `SELECT * FROM td_donasi where tgl_entry between '${firstDate}' and '${secondDate}' ORDER BY id_donasi DESC`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: detail,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
 export const saveDonasi = async (req, res) => {
   try {
     if (req.file) {

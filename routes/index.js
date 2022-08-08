@@ -19,6 +19,7 @@ import {
   getAllDonasiVerified,
   getAllDonasiByName,
   getTotalDonasi,
+  getDonasiByBetweenDate,
 } from "../controllers/Donasi.js";
 import {
   getAllPeminjaman,
@@ -38,6 +39,7 @@ import {
   getPaidPembayaran,
   getSummaryPeminjaman,
   getAllKonten,
+  getPeminjamanByBetweenDate,
 } from "../controllers/Peminjaman.js";
 
 import {
@@ -46,6 +48,7 @@ import {
   getByNimPembayaran,
   savePembayaran,
   putPembayaran,
+  getPembayaranByBetweenDate,
 } from "../controllers/Pembayaran.js";
 
 import { authUser, changePassword } from "../controllers/Auth.js";
@@ -79,6 +82,7 @@ router.put(
 );
 
 router.get("/donasi/getTotalDonasi", getTotalDonasi);
+router.post("/donasi/getDonasiByBetweenDate", getDonasiByBetweenDate);
 router.get("/donasi/getAll", getAllDonasi);
 router.get("/donasi/getOne", getOneDonasi);
 router.get("/donasi/getAllDonasiVerified", getAllDonasiVerified);
@@ -92,6 +96,10 @@ router.post(
 
 // PEMINJAMAN
 router.get("/peminjaman/getAll", getAllPeminjaman);
+router.post(
+  "/peminjaman/getPeminjamanByBetweenDate",
+  getPeminjamanByBetweenDate
+);
 router.get("/konten/getAll", getAllKonten);
 router.get("/peminjaman/getSummaryPeminjaman", getSummaryPeminjaman);
 router.post("/peminjaman/createWawancara", saveWawancara);
@@ -139,6 +147,10 @@ router.post(
 
 // PEMBAYARAN
 router.get("/pembayaran/getAll", getAllPembayaran);
+router.post(
+  "/pembayaran/getPembayaranByBetweenDate",
+  getPembayaranByBetweenDate
+);
 router.get("/pembayaran/getOne", getOnePembayaran);
 router.get("/pembayaran/getByNim", getByNimPembayaran);
 router.post(

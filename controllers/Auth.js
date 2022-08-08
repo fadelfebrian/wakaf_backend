@@ -91,12 +91,6 @@ export const changePassword = async (req, res) => {
         msg: "password not match",
       });
     }
-
-    return res.status(200).json({
-      status: true,
-      msg: "success",
-      data: user,
-    });
   } catch (err) {
     return res.status(500).json({
       status: false,
@@ -131,8 +125,15 @@ export const authUser = async (req, res) => {
         where: {
           username,
           akses: {
-            [Op.or]: [2, 6],
+            [Op.or]: [2],
           },
+        },
+      });
+    } else if (user_type == "6") {
+      user = await AdminWakaf.findOne({
+        where: {
+          username,
+          akses: 6,
         },
       });
     } else if (user_type == "4") {
@@ -161,7 +162,12 @@ export const authUser = async (req, res) => {
 
     if (user_type == "1" || user_type == "3") {
       passwordUser = user.dataValues.password;
-    } else if (user_type == "2" || user_type == "4" || user_type == "5") {
+    } else if (
+      user_type == "2" ||
+      user_type == "4" ||
+      user_type == "5" ||
+      user_type == "6"
+    ) {
       passwordUser = user.dataValues.pwd;
     }
 
@@ -183,7 +189,10 @@ export const authUser = async (req, res) => {
         token: accessToken,
         isMahasiswa: user_type == "1" ? true : false,
         isVerifikator:
-          user_type == "2" || user_type == "4" || user_type == "5"
+          user_type == "2" ||
+          user_type == "4" ||
+          user_type == "5" ||
+          user_type == "6"
             ? true
             : false,
         isDonatur: user_type == "3" ? true : false,

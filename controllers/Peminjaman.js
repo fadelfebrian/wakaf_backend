@@ -48,6 +48,26 @@ export const getAllPeminjaman = async (req, res) => {
   }
 };
 
+export const getPeminjamanByBetweenDate = async (req, res) => {
+  try {
+    const { firstDate, secondDate } = req.body;
+    const query = `SELECT * FROM td_peminjaman where tgl_pengajuan between '${firstDate}' and '${secondDate}' ORDER BY id_peminjaman DESC`;
+    const detail = await db.query(query, { type: QueryTypes.SELECT });
+
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: detail,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      msg: err.message,
+      data: null,
+    });
+  }
+};
+
 export const getSummaryPeminjaman = async (req, res) => {
   try {
     let result = {};
@@ -294,12 +314,6 @@ export const getPeminjamanValidated = async (req, res) => {
   try {
     const query = `SELECT id_peminjaman,nim,jenis_pinjaman,tgl_pengajuan,file_bukti_krs,file_tagihan,file_krs_ta,file_s_persetujuan,file_s_materai,sts_pengajuan,sts_peminjaman,sts_pembayaran,nominal,sisa,tgl_jatuh_tempo,pesan,nama_mhs,prodi,no_hp,email FROM td_peminjaman LEFT JOIN td_peserta_wakaf ON td_peminjaman.NIM = td_peserta_wakaf.nim_mhs WHERE sts_pengajuan = 4 ORDER BY id_peminjaman DESC`;
     const detail = await db.query(query, { type: QueryTypes.SELECT });
-    // const result = await Peminjaman.findAll({
-    //   order: [["id_peminjaman", "DESC"]],
-    //   where: {
-    //     sts_pengajuan: "4",
-    //   },
-    // });
     if (detail) {
       res.status(200).json({
         status: true,
